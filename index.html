@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Proctoring Demo By Aditi Chauhan</title>
+
+  <!-- ✅ TensorFlow.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@4.11.0/dist/tf-backend-webgl.min.js"></script>
+
+  <!-- ✅ Face Landmarks Detection (UMD build includes Mediapipe internally) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection/dist/face-landmarks-detection.umd.js"></script>
+
+  <!-- ✅ Coco-SSD -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.2/dist/coco-ssd.min.js"></script>
+
+  <!-- ✅ jsPDF for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; margin: 18px; background:#0f172a; color:#e6eef8; }
+    .container { max-width:1000px; margin:0 auto; }
+    header { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    h1 { font-size:20px; margin:0 0 12px 0; }
+    .video-wrap { position:relative; width:640px; max-width:100%; background:#000; border-radius:8px; overflow:hidden; }
+    video, canvas { display:block; width:100%; height:auto; }
+    .controls { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; }
+    button, input, select { padding:8px 10px; border-radius:8px; border: none; background:#1f2937; color:#fff; cursor:pointer; }
+    button.secondary { background:#334155; }
+    .small { font-size:13px; padding:6px 8px; }
+    #log { margin-top:12px; background:#071024; padding:10px; border-radius:8px; max-height:200px; overflow:auto; font-family:monospace; font-size:13px; }
+    label { font-size:13px; margin-right:6px; }
+    .meta { margin-top:12px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+    .tag { background:#0b1220; padding:6px 8px; border-radius:6px; font-size:13px; color:#9fb3d9;}
+    .right { margin-left:auto; }
+    footer { margin-top:18px; font-size:13px; color:#9fb3d9; }
+    a.link { color:#60a5fa; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Focus & Object Detection — Proctoring Demo</h1>
+        <div style="font-size:13px; color:#9fb3d9">In-browser face landmarks + object detection (TF.js). Prototype for assignment.</div>
+      </div>
+      <div class="tag">MVP</div>
+    </header>
+
+    <div style="display:flex; gap:18px; flex-wrap:wrap; margin-top:12px;">
+      <div>
+        <div class="video-wrap">
+          <video id="video" autoplay playsinline muted></video>
+          <canvas id="overlay"></canvas>
+        </div>
+
+        <div class="controls">
+          <input id="candidateName" placeholder="Candidate name" class="small" />
+          <button id="startSession" class="small">Start Session</button>
+          <button id="stopSession" class="small secondary" disabled>Stop Session</button>
+          <button id="startRec" class="small secondary" disabled>Start Recording</button>
+          <button id="stopRec" class="small secondary" disabled>Stop Recording</button>
+          <button id="downloadCSV" class="small secondary">Download CSV</button>
+          <button id="downloadPDF" class="small secondary">Download Report (PDF)</button>
+        </div>
+
+        <div class="meta">
+          <div class="tag" id="sessionStatus">Session: Idle</div>
+          <div class="tag" id="integrityScore">Score: 100</div>
+          <div class="tag right" id="recordingStatus">Recording: No</div>
+        </div>
+
+        <div id="log" aria-live="polite"></div>
+      </div>
+
+      <div style="flex:1; min-width:260px;">
+        <h3 style="margin-top:0;">Settings & Notes</h3>
+        <p style="font-size:13px; color:#cfe8ff;">
+          This prototype runs models inside your browser (no video leaves your machine unless you enable server upload).
+        </p>
+
+        <div style="margin-top:8px;">
+          <label for="backendUrl">Backend URL (optional):</label><br/>
+          <input id="backendUrl" placeholder="https://your-server.com" style="width:100%;" />
+        </div>
+
+        <div style="margin-top:12px;">
+          <strong>Detections:</strong>
+          <ul style="font-size:13px; color:#cfe8ff; padding-left:18px;">
+            <li>Face present/absent & multiple faces</li>
+            <li>Looking away (heuristic using nose vs eyes)</li>
+            <li>Object detection: phone, book</li>
+          </ul>
+        </div>
+
+        <div style="margin-top:8px; font-size:13px; color:#9fb3d9;">
+          Tip: use natural lighting, center your face, test with a phone/book in frame.
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      &copy; Proctoring Demo • Remember to get candidate consent before recording.
+    </footer>
+  </div>
+
+  <!-- main logic -->
+  <script src="./script.js"></script>
+</body>
+</html>
